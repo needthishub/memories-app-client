@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Grid, CircularProgress } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 
@@ -20,6 +21,10 @@ const Posts = ({ setCurrentId }) => {
       </Grid>
     )
   );
+};
+
+Posts.propTypes = {
+  setCurrentId: PropTypes.any.isRequired,
 };
 
 export default Posts;
