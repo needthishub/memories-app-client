@@ -1,11 +1,12 @@
 import React, { useState as useStateMock } from 'react';
 import { shallow } from 'enzyme';
-import { createPost, selectPostById, updatePost } from '../../storage/posts';
+import { createPostAction, selectPostById, updatePostAction } from '../../storage/posts';
 import Form from './Form';
 
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
   useState: jest.fn(),
+  useEffect: jest.fn(),
 }));
 
 jest.mock('react-redux', () => ({
@@ -19,7 +20,7 @@ describe('<Form />', () => {
   const setPostDataMock = jest.fn();
 
   beforeEach(() => {
-    useStateMock.mockImplementationOnce((init) => [init, setPostDataMock]);
+    useStateMock.mockImplementation((init) => [init, setPostDataMock]);
   });
 
   afterEach(() => {
@@ -32,7 +33,7 @@ describe('<Form />', () => {
     // jest.spyOn(React, 'useEffect').mockImplementation((f) => f());
     const wrapper = shallow(<Form currentId={0} setCurrentId={jest.fn()} />);
     await wrapper.dive().find('form').props().onSubmit(eventMock);
-    expect(createPost).toBeCalled();
+    expect(createPostAction).toBeCalled();
   });
 
   it('should update post', async () => {
@@ -40,17 +41,18 @@ describe('<Form />', () => {
     selectPostById.mockImplementation(() => () => ({}));
     const wrapper = shallow(<Form currentId={1} setCurrentId={jest.fn()} />);
     await wrapper.dive().find('form').props().onSubmit(eventMock);
-    expect(updatePost).toBeCalled();
+    expect(updatePostAction).toBeCalled();
   });
 
-  /* it('should effect set post data when select post', () => {
-    const setCurrentIdMock = jest.fn();
+  it('should effect set post data when select post', () => {
+    jest.spyOn(React, 'useEffect').mockImplementation((f) => f());
+    selectPostById.mockImplementationOnce(() => () => null);
+    const wrapper = shallow(<Form currentId={1} setCurrentId={jest.fn()} />);
     const postDataMock = { creator: '', title: 'NewTitle', message: 'testMessage', tags: '', selectedFile: '' };
-    const selectPostByIdMock = selectPostById.mockImplementationOnce(() => () => ({ title: 'testTitle' }));
-    const wrapper = shallow(<Form currentId={1} setCurrentId={setCurrentIdMock} />);
-    expect(wrapper.find('#typography').children).toBe('Editing "NewTitle"');
-    expect(setCurrentIdMock).toBeCalledWith({ title: 'testTitle' });
-  }); */
+    selectPostById.mockImplementationOnce(() => () => (postDataMock));
+    wrapper.rerender({ currentId: 0, setCurrentId: jest.fn() });
+    expect(setPostDataMock).toBeCalledWith(postDataMock);
+  });
 
   it('should change creator text field value', () => {
     const eventMock = { preventDefault() {}, target: { value: 'testCreator' } };

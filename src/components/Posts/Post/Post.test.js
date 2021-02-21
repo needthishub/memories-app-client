@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import * as reactRedux from 'react-redux';
 import Post from './Post';
-import { deletePost, likePost } from '../../../storage/posts';
+import { deletePostAction, likePostAction } from '../../../storage/posts';
 
 jest.mock('../../../storage/posts');
 
@@ -48,7 +48,7 @@ describe('<Post />', () => {
       setCurrentId={jest.fn()}
     />);
     wrapper.find('.like-btn').props().onClick();
-    expect(likePost).toBeCalledWith(testID);
+    expect(likePostAction).toBeCalledWith(testID);
   });
 
   it('should delete post while click on button', () => {
@@ -64,7 +64,7 @@ describe('<Post />', () => {
       setCurrentId={jest.fn()}
     />);
     wrapper.find('.delete-btn').props().onClick();
-    expect(deletePost).toBeCalledWith(testID);
+    expect(deletePostAction).toBeCalledWith(testID);
   });
 
   it('should match to snapshot', () => {

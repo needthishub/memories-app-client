@@ -1,73 +1,87 @@
 import * as api from '../api';
 
-export const CREATE = 'CREATE';
-export const UPDATE = 'UPDATE';
-export const DELETE = 'DELETE';
-export const FETCH_ALL = 'FETCH_ALL';
-export const LIKE = 'LIKE';
+const CREATE = 'POSTS/CREATE';
+const UPDATE = 'POSTS/UPDATE';
+const DELETE = 'POSTS/DELETE';
+const FETCH_ALL = 'POSTS/FETCH_ALL';
+const LIKE = 'POSTS/LIKE';
+const ERROR = 'POSTS/ERROR';
 
-export const getPosts = () => async (dispatch) => {
+export const fetchPostsAction = () => async (dispatch) => {
   try {
     const { data } = await api.fetchPosts();
 
     dispatch({ type: FETCH_ALL, payload: data });
   } catch (error) {
     console.log(error.message);
+    dispatch({ type: ERROR, payload: error.message });
   }
 };
 
-export const createPost = (post) => async (dispatch) => {
+export const createPostAction = (post) => async (dispatch) => {
   try {
     const { data } = await api.createPost(post);
 
     dispatch({ type: CREATE, payload: data });
   } catch (error) {
     console.log(error.message);
+    dispatch({ type: ERROR, payload: error.message });
   }
 };
-export const updatePost = (id, post) => async (dispatch) => {
+export const updatePostAction = (id, post) => async (dispatch) => {
   try {
     const { data } = await api.updatePost(id, post);
 
     dispatch({ type: UPDATE, payload: data });
   } catch (error) {
     console.log(error.message);
+    dispatch({ type: ERROR, payload: error.message });
   }
 };
-export const likePost = (id) => async (dispatch) => {
+export const likePostAction = (id) => async (dispatch) => {
   try {
     const { data } = await api.likePost(id);
 
     dispatch({ type: LIKE, payload: data });
   } catch (error) {
     console.log(error.message);
+    dispatch({ type: ERROR, payload: error.message });
   }
 };
-export const deletePost = (id) => async (dispatch) => {
+export const deletePostAction = (id) => async (dispatch) => {
   try {
     await api.deletePost(id);
 
     dispatch({ type: DELETE, payload: id });
   } catch (error) {
     console.log(error.message);
+    dispatch({ type: ERROR, payload: error.message });
   }
 };
 
 export const selectPostById = (currentId) => (state) => (
-  currentId ? state.posts.find((message) => message._id === currentId) : null);
+  currentId ? state.posts.list.find((message) => message._id === currentId) : null);
 
-export default (state = [], action) => {
-  switch (action.type) {
+export const selectPosts = (state) => state.posts.list;
+
+export const selectError = (state) => state.posts.error;
+
+const INITIAL_STATE = { list: [], error: null };
+
+export default (state = INITIAL_STATE, { type, payload }) => {
+  switch (type) {
     case FETCH_ALL:
-      return action.payload;
+      return { list: payload, error: null };
     case LIKE:
-      return state.map((post) => (post._id === action.payload._id ? action.payload : post));
+      return { list: state.list.map((post) => (post._id === payload._id ? payload : post)), error: null };
     case CREATE:
-      return [...state, action.payload];
+      return { list: [...state.list, payload], error: null };
     case UPDATE:
-      return state.map((post) => (post._id === action.payload._id ? action.payload : post));
+      return { list: state.list.map((post) => (post._id === payload._id ? payload : post)), error: null };
     case DELETE:
-      return state.filter((post) => post._id !== action.payload);
+      return { list: state.list.filter((post) => post._id !== payload), error: null };
+    case ERROR:
+      return { ...state, error: payload };
     default:
       return state;
   }

@@ -5,9 +5,10 @@ import { useSelector } from 'react-redux';
 
 import Post from './Post/Post';
 import useStyles from './styles';
+import { selectPosts } from '../../storage/posts';
 
 const Posts = ({ setCurrentId }) => {
-  const posts = useSelector((state) => state.posts);
+  const posts = useSelector(selectPosts);
   const classes = useStyles();
 
   return (

@@ -8,7 +8,7 @@ import moment from 'moment';
 import { useDispatch } from 'react-redux';
 
 import useStyles from './styles';
-import { deletePost, likePost } from '../../../storage/posts';
+import { deletePostAction, likePostAction } from '../../../storage/posts';
 
 const Post = ({ post, setCurrentId }) => {
   const dispatch = useDispatch();
@@ -52,14 +52,14 @@ const Post = ({ post, setCurrentId }) => {
           className="like-btn"
           size="small"
           color="primary"
-          onClick={() => dispatch(likePost(post._id))}
+          onClick={() => dispatch(likePostAction(post._id))}
         ><ThumbUpAltIcon fontSize="small" /> Like {post.likeCount}
         </Button>
         <Button
           className="delete-btn"
           size="small"
           color="primary"
-          onClick={() => dispatch(deletePost(post._id))}
+          onClick={() => dispatch(deletePostAction(post._id))}
         ><DeleteIcon fontSize="small" /> Delete
         </Button>
       </CardActions>

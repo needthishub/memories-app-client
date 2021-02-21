@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import FileBase from 'react-file-base64';
 
 import useStyles from './styles';
-import { createPost, selectPostById, updatePost } from '../../storage/posts';
+import { createPostAction, selectPostById, updatePostAction } from '../../storage/posts';
 
 const Form = ({ currentId, setCurrentId }) => {
   const [postData, setPostData] = useState({
@@ -27,10 +27,10 @@ const Form = ({ currentId, setCurrentId }) => {
     e.preventDefault();
 
     if (currentId === 0) {
-      await dispatch(createPost(postData));
+      await dispatch(createPostAction(postData));
       clear();
     } else {
-      await dispatch(updatePost(currentId, postData));
+      await dispatch(updatePostAction(currentId, postData));
       clear();
     }
   };
@@ -43,7 +43,7 @@ const Form = ({ currentId, setCurrentId }) => {
         className={`${classes.root} ${classes.form}`}
         onSubmit={handleSubmit}
       >
-        <Typography variant="h6">{currentId ? `Editing "${post.title}"` : 'Creating a Memory'}</Typography>
+        <Typography variant="h6">{post ? `Editing "${post.title}"` : 'Creating a Memory'}</Typography>
         <TextField
           id="creator"
           name="creator"

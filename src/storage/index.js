@@ -1,5 +1,9 @@
-import { combineReducers } from 'redux';
+import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
 
+import thunk from 'redux-thunk';
 import posts from './posts';
 
-export const reducers = combineReducers({ posts });
+const reducers = combineReducers({ posts });
+export const createStorage = (initialState = {}) => (
+  createStore(reducers, initialState, compose(applyMiddleware(thunk))));
+
